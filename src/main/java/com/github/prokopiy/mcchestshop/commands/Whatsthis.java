@@ -6,7 +6,11 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.blockray.BlockRay;
 import org.spongepowered.api.util.blockray.BlockRayHit;
@@ -27,20 +31,26 @@ public class Whatsthis implements CommandExecutor {
             throw new CommandException(plugin.fromLegacy("Only players can run this command"));
         }
         Player player = (Player) src;
+        Optional<ItemStack> optionalItemStack = player.getItemInHand(HandTypes.MAIN_HAND);
 
-
-        BlockRay<World> blockRay = BlockRay.from(player).stopFilter(BlockRay.continueAfterFilter(BlockRay.onlyAirFilter(), 1)).build();
-        Optional<BlockRayHit<World>> hitOpt = blockRay.end();
-        if (hitOpt.isPresent()) {
-            BlockRayHit<World> hit = hitOpt.get();
-            String itemId = plugin.getLocationID(hit.getLocation());
-
-
-            String msg = itemId;
-            player.sendMessage(plugin.fromLegacy(msg));
-        } else {
-            throw new CommandException(Text.of("Is null!"));
+        if (!optionalItemStack.isPresent()) {
+            throw new CommandException(plugin.fromLegacy("You must be holding an item"));
         }
+
+        ItemStack itemStack = optionalItemStack.get();
+
+        DataContainer container = itemStack.toContainer();
+        DataQuery query = DataQuery.of('/', "UnsafeDamage");
+
+        int unsafeDamage = Integer.parseInt(container.get(query).get().toString());
+
+        String item = itemStack.getType().getId();
+
+        if (unsafeDamage != 0) {
+            item = item + ":" + unsafeDamage;
+        }
+
+        player.sendMessage(plugin.fromLegacy("&6Item: &e" + item));
 
         return CommandResult.success();
     }

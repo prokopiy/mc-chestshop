@@ -45,7 +45,7 @@ public class Main {
 //        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(GroupData.class), new GroupDataSerializer());
 //        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(BlockData.class), new BlockData.BlockDataSerializer());
 
-//        loadCommands(); logger.info("Load commands...");
+        loadCommands(); logger.info("Load commands...");
 //        loadData(); logger.info("Load data...");
     }
 
@@ -108,6 +108,9 @@ public class Main {
         }
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
 
     public Text fromLegacy(String legacy) {
         return TextSerializers.FORMATTING_CODE.deserializeUnchecked(legacy);

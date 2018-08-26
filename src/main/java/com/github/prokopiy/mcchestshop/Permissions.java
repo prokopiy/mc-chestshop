@@ -9,7 +9,7 @@ public class Permissions {
     public static final String BYPASS_LIMITED_BLOCK = PLUGIN_ID + ".bypass";
 
     public static final String WHATS_THIS   = PLUGIN_ID + ".commands.whatsthis";
-    public static final String BLOCK_ADD    = PLUGIN_ID + ".commands.block.add";
+    public static final String TRADE        = PLUGIN_ID + ".trade";
     public static final String BLOCK_REMOVE = PLUGIN_ID + ".commands.block.remove";
     public static final String UPDATE_BLOCK = PLUGIN_ID + ".commands.block.update";
 
