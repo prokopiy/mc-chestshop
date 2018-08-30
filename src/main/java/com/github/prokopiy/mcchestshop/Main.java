@@ -10,9 +10,12 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -107,6 +110,23 @@ public class Main {
             return itemID;
         }
     }
+
+    public String getItemStackID(ItemStack itemStack) {
+//        final List<ItemData> items = new ArrayList<ItemData>(plugin.getItemData());
+        DataContainer container = itemStack.toContainer();
+        DataQuery query = DataQuery.of('/', "UnsafeDamage");
+        String itemID = itemStack.getType().getId();
+
+        int unsafeDamage = 0;
+        if (container.get(query).isPresent()) {
+            unsafeDamage = Integer.parseInt(container.get(query).get().toString());
+        }
+        if (unsafeDamage != 0) {
+            itemID = itemID + ":" + unsafeDamage;
+        }
+        return itemID;
+    }
+
 
     public Logger getLogger() {
         return logger;

@@ -21,6 +21,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import sun.font.GlyphLayout;
 import sun.management.snmp.jvmmib.JvmThreadingMeta;
 
 import java.math.BigDecimal;
@@ -85,12 +86,41 @@ public class EventListener {
     @Listener
     public void onRightClick(InteractBlockEvent.Secondary.MainHand event, @Root Player player) {
         boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
-        if (sneaking) player.sendMessage(plugin.fromLegacy("is sneaking"));
-        if (player.hasPermission(Permissions.TRADE) && event.getTargetBlock().getState().getType().equals(BlockTypes.WALL_SIGN) && sneaking) {
-            player.sendMessage(plugin.fromLegacy("is WALL_SIGN"));
+        if (sneaking) {
+            player.sendMessage(plugin.fromLegacy("onRightClick: is sneaking"));
+            if (player.hasPermission(Permissions.TRADE) && event.getTargetBlock().getState().getType().equals(BlockTypes.WALL_SIGN)) {
+                player.sendMessage(plugin.fromLegacy("onRightClick: is WALL_SIGN"));
+
+                TileEntity entity = event.getTargetBlock().getLocation().get().getTileEntity().get();
+                SignData signData = entity.get(SignData.class).get();
+                if (isValidSignChest(signData)){
+                    player.sendMessage(plugin.fromLegacy("onRightClick: isValidSignChest"));
+                    player.sendMessage(plugin.fromLegacy("onRightClick: sign 1 = " + signData.lines().get(1).toPlain()));
+                    if (signData.lines().get(0).toPlain().equals(player.getName())) {
+                        player.sendMessage(plugin.fromLegacy("onRightClick: is your SignShop"));
+//                        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && player.getItemInHand(HandTypes.MAIN_HAND).get().getType().getType().equals(ItemTypes.FLINT)) {
+                        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
+//                            player.getItemInHand(HandTypes.MAIN_HAND).get()
+                            String id = plugin.getItemStackID(player.getItemInHand(HandTypes.MAIN_HAND).get());
+                            player.sendMessage(plugin.fromLegacy("onRightClick: set ID..." + id));
+                            setSignLine(entity, 3, Text.of(id));
+                        }
+
+
+                    } else {
+                        player.sendMessage(plugin.fromLegacy("onRightClick: is NOT your SignShop"));
+                    }
+
+                }
+
+
+            }
+        } else {
 
         }
     }
+
+
 
 
     public boolean setSignLine(TileEntity entity, int indx, Text text) {
