@@ -12,17 +12,21 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.UUID;
 
 @Plugin(
         id = "mc-chestshop",
@@ -34,9 +38,14 @@ public class Main {
 
     private CommandManager cmdManager = Sponge.getCommandManager();
 
+    public Optional<UserStorageService> userStorage;
 
     @Inject
     private Logger logger;
+
+    public static Main getInstance() {
+        return instance;
+    }
 
 
     @Listener
@@ -55,6 +64,7 @@ public class Main {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
+        userStorage = Sponge.getServiceManager().provide(UserStorageService.class);
     }
 
 
@@ -92,41 +102,10 @@ public class Main {
         cmdManager.register(this, chestshop, "chestshop");
     }
 
-
-    public String getLocationID(Location<World> location) {
-        if (location == null) {
-            return null;
-        } else {
-            String itemID = null;
-            if (location.getTileEntity().isPresent()) {
-                try {
-                    itemID = location.getTileEntity().get().getType().getId().toLowerCase().replaceAll(" ", "_");
-                } catch (Exception e) {};
-            } else {
-                try {
-                    itemID = location.getBlockType().getName().toLowerCase().replaceAll(" ", "_");
-                } catch (Exception e) {};
-            }
-            return itemID;
-        }
+    public Optional<User> getUser(UUID uuid) {
+        Optional<UserStorageService> userStorage = Sponge.getServiceManager().provide(UserStorageService.class);
+        return userStorage.get().get(uuid);
     }
-
-    public String getItemStackID(ItemStack itemStack) {
-//        final List<ItemData> items = new ArrayList<ItemData>(plugin.getItemData());
-        DataContainer container = itemStack.toContainer();
-        DataQuery query = DataQuery.of('/', "UnsafeDamage");
-        String itemID = itemStack.getType().getId();
-
-        int unsafeDamage = 0;
-        if (container.get(query).isPresent()) {
-            unsafeDamage = Integer.parseInt(container.get(query).get().toString());
-        }
-        if (unsafeDamage != 0) {
-            itemID = itemID + ":" + unsafeDamage;
-        }
-        return itemID;
-    }
-
 
     public Logger getLogger() {
         return logger;
