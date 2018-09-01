@@ -157,7 +157,7 @@ public class EventListener {
                                                     if ((uOpt.isPresent()) && (oOpt.isPresent())) {
                                                         player.sendMessage(plugin.fromLegacy("onRightClick: ((uOpt.isPresent()) && (oOpt.isPresent()))"));
                                                         UniqueAccount userAccount = uOpt.get();
-                                                        Account ownerAccount = oOpt.get();
+                                                        UniqueAccount ownerAccount = oOpt.get();
 
                                                         BigDecimal requiredAmount = SignShop.getSignBuyPrice(sign);
 
