@@ -152,7 +152,7 @@ public class EventListener {
 
                                                 if (user.isPresent()) {
                                                     player.sendMessage(plugin.fromLegacy("onRightClick: (user.isPresent())"));
-                                                    Optional<UniqueAccount> oOpt = economyService.getOrCreateAccount(user.get().getWorldUniqueId().get());
+                                                    Optional<UniqueAccount> oOpt = economyService.getOrCreateAccount(user.get().getUniqueId());
 
                                                     if ((uOpt.isPresent()) && (oOpt.isPresent())) {
                                                         player.sendMessage(plugin.fromLegacy("onRightClick: ((uOpt.isPresent()) && (oOpt.isPresent()))"));
