@@ -94,23 +94,23 @@ public class EventListener {
         boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
         if (sneaking) {
         } else {
-            player.sendMessage(plugin.fromLegacy("onRightClick: is sneaking"));
+//            player.sendMessage(plugin.fromLegacy("onRightClick: is sneaking"));
             if (player.hasPermission(Permissions.TRADE) && event.getTargetBlock().getState().getType().equals(BlockTypes.WALL_SIGN)) {
-                player.sendMessage(plugin.fromLegacy("onRightClick: is WALL_SIGN"));
+//                player.sendMessage(plugin.fromLegacy("onRightClick: is WALL_SIGN"));
 
                 TileEntity entity = event.getTargetBlock().getLocation().get().getTileEntity().get();
                 Sign sign = (Sign) event.getTargetBlock().getLocation().get().getTileEntity().get();
                 SignData signData = entity.get(SignData.class).get();
                 if (SignShop.isValidSignShop(signData)){
-                    player.sendMessage(plugin.fromLegacy("onRightClick: isValidSignChest"));
-                    player.sendMessage(plugin.fromLegacy("onRightClick: sign 1 = " + signData.lines().get(1).toPlain()));
+//                    player.sendMessage(plugin.fromLegacy("onRightClick: isValidSignChest"));
+//                    player.sendMessage(plugin.fromLegacy("onRightClick: sign 1 = " + signData.lines().get(1).toPlain()));
                     if (signData.lines().get(0).toPlain().equals(player.getName())) {
-                        player.sendMessage(plugin.fromLegacy("onRightClick: is your SignShop"));
+//                        player.sendMessage(plugin.fromLegacy("onRightClick: is your SignShop"));
 //                        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && player.getItemInHand(HandTypes.MAIN_HAND).get().getType().getType().equals(ItemTypes.FLINT)) {
                         if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
 //                            player.getItemInHand(HandTypes.MAIN_HAND).get()
                             String id = Id.getItemStackID(player.getItemInHand(HandTypes.MAIN_HAND).get());
-                            player.sendMessage(plugin.fromLegacy("onRightClick: set ID..." + id));
+//                            player.sendMessage(plugin.fromLegacy("onRightClick: set ID..." + id));
                             setSignLine(entity, 3, Text.of(id));
                         }
 
@@ -118,10 +118,10 @@ public class EventListener {
                     } else {
                         player.sendMessage(plugin.fromLegacy("onRightClick: is NOT your SignShop"));
                         Direction d = SignShop.getSignDirection(sign);
-                        player.sendMessage(plugin.fromLegacy("onRightClick: getSignDirection=" + d.toString()));
+//                        player.sendMessage(plugin.fromLegacy("onRightClick: getSignDirection=" + d.toString()));
 
                         Location l = getNearLocationByDirection(sign.getLocation(), d);
-                        player.sendMessage(plugin.fromLegacy("onRightClick: getNearLocationByDirection=" + l.getPosition().toString()));
+//                        player.sendMessage(plugin.fromLegacy("onRightClick: getNearLocationByDirection=" + l.getPosition().toString()));
 
 //                        TileEntityCarrier chest = (TileEntityCarrier) l.getTileEntity().get();
                         if (l.getBlock().getType().equals(BlockTypes.CHEST) || l.getBlock().getType().equals(BlockTypes.TRAPPED_CHEST)) {
@@ -140,51 +140,54 @@ public class EventListener {
                                             EconomyService economyService = serviceOpt.get();
 
                                             Optional<UniqueAccount> uOpt = economyService.getOrCreateAccount(player.getUniqueId());
-//                                            User owner = <User>getOne(SignShop.getSignOwnerName(sign)).get();
 
+                                            if (plugin.userStorage.isPresent()) {
+                                                player.sendMessage(plugin.fromLegacy("onRightClick: (plugin.userStorage.isPresent())"));
+                                                Optional<User> user = plugin.userStorage.get().get(SignShop.getSignOwnerName(sign));
+//                                                Optional<Player> owner = plugin.userStorage.get().get(SignShop.getSignOwnerName(sign)).get().getPlayer();
+                                                player.sendMessage(plugin.fromLegacy("onRightClick: SignShop.getSignOwnerName(sign)=" + SignShop.getSignOwnerName(sign)));
 
-                                            Optional<Account> oOpt = economyService.getOrCreateAccount(SignShop.getSignOwnerName(sign));
+//                                                player.sendMessage(plugin.fromLegacy("onRightClick: owner.get().getUniqueId()=" + owner.get().getUniqueId().toString()));
+//                                                Optional<UniqueAccount> oOpt = economyService.getOrCreateAccount(owner.get().getUniqueId());
 
-                                            if ((uOpt.isPresent()) && (oOpt.isPresent())) {
-                                                player.sendMessage(plugin.fromLegacy("onRightClick: ((uOpt.isPresent()) && (oOpt.isPresent()))"));
-                                                UniqueAccount userAccount = uOpt.get();
-                                                Account ownerAccount = oOpt.get();
+                                                if (user.isPresent()) {
+                                                    player.sendMessage(plugin.fromLegacy("onRightClick: (user.isPresent())"));
+                                                    Optional<UniqueAccount> oOpt = economyService.getOrCreateAccount(user.get().getWorldUniqueId().get());
 
-                                                BigDecimal requiredAmount = SignShop.getSignBuyPrice(sign);
+                                                    if ((uOpt.isPresent()) && (oOpt.isPresent())) {
+                                                        player.sendMessage(plugin.fromLegacy("onRightClick: ((uOpt.isPresent()) && (oOpt.isPresent()))"));
+                                                        UniqueAccount userAccount = uOpt.get();
+                                                        Account ownerAccount = oOpt.get();
 
-                                                if (userAccount.withdraw(economyService.getDefaultCurrency(), requiredAmount,
-                                                        Cause.of(EventContext.empty(),(Main.getInstance()))).getResult().equals(ResultType.SUCCESS)) {
+                                                        BigDecimal requiredAmount = SignShop.getSignBuyPrice(sign);
 
-                                                    if (purchase(chest, sign, player)) {
-
-                                                        if (ownerAccount.deposit(economyService.getDefaultCurrency(), requiredAmount,
+                                                        if (userAccount.transfer(ownerAccount,economyService.getDefaultCurrency(),requiredAmount,
                                                                 Cause.of(EventContext.empty(),(Main.getInstance()))).getResult().equals(ResultType.SUCCESS)) {
-                                                            player.sendMessage(plugin.fromLegacy("owner = " + ownerAccount.getDisplayName().toPlain()));
+                                                            if (purchase(chest, sign, player)) {
+
+                                                            }
+
+                                                            player.sendMessage(plugin.fromLegacy("Pay to " + ownerAccount.getDisplayName().toPlain()));
                                                         } else {
-                                                            player.sendMessage(plugin.fromLegacy("onRightClick: Deposit false!"));
+                                                            player.sendMessage(plugin.fromLegacy("onRightClick: Transfer false!"));
                                                         }
 
+                                                    } else {
+                                                        player.sendMessage(plugin.fromLegacy("onRightClick: Owner not found!"));
                                                     }
 
                                                 } else {
-                                                    player.sendMessage(plugin.fromLegacy("onRightClick: not enough money!"));
-                                                }
-                                            }
 
-//                                            if (plugin.userStorage.isPresent()) {
-//                                                player.sendMessage(plugin.fromLegacy("onRightClick: (plugin.userStorage.isPresent())"));
-//                                                Optional<Player> owner = plugin.userStorage.get().get(SignShop.getSignOwnerName(sign)).get().getPlayer();
-//                                                player.sendMessage(plugin.fromLegacy("onRightClick: SignShop.getSignOwnerName(sign)=" + SignShop.getSignOwnerName(sign)));
+                                                }
+
+
 //                                                if (owner.isPresent()){
 //
-//                                                    player.sendMessage(plugin.fromLegacy("onRightClick: (owner.isPresent())"));
-////                                                    economyService.getOrCreateAccount("");
-////                                                    Optional<UniqueAccount> oOpt = economyService.getOrCreateAccount(owner.get().getUniqueId());
-//
 //                                                } else {
-//                                                    player.sendMessage(plugin.fromLegacy("onRightClick: Owner not found!"));
+//                                                    player.sendMessage(plugin.fromLegacy("onRightClick: owner.isPresent() = FALSE"));
 //                                                }
-//                                            }
+                                            }
+
 
                                         } else {
                                             // handle there not being an economy implementation
