@@ -28,13 +28,13 @@ public class Whatsthis implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (!(src instanceof Player)) {
-            throw new CommandException(plugin.fromLegacy("Only players can run this command"));
+            throw new CommandException(plugin.fromLegacy("&d[ChestShop] &bOnly players can run this command"));
         }
         Player player = (Player) src;
         Optional<ItemStack> optionalItemStack = player.getItemInHand(HandTypes.MAIN_HAND);
 
         if (!optionalItemStack.isPresent()) {
-            throw new CommandException(plugin.fromLegacy("You must be holding an item"));
+            throw new CommandException(plugin.fromLegacy("&d[ChestShop] &bYou must be holding an item"));
         }
 
         ItemStack itemStack = optionalItemStack.get();
@@ -50,7 +50,7 @@ public class Whatsthis implements CommandExecutor {
             item = item + ":" + unsafeDamage;
         }
 
-        player.sendMessage(plugin.fromLegacy("&6Item: &e" + item));
+        player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eItem is: &b" + item));
 
         return CommandResult.success();
     }

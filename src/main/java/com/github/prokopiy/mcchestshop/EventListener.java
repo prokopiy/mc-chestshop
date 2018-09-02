@@ -35,6 +35,7 @@ import org.spongepowered.api.service.economy.account.Account;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.economy.transaction.ResultType;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -60,33 +61,32 @@ public class EventListener {
 
     @Listener
     public void onChangeSignEvent(ChangeSignEvent event, @Root Player player) {
-        player.sendMessage(plugin.fromLegacy("&conChangeSignEvent"));
+//        player.sendMessage(plugin.fromLegacy("&conChangeSignEvent"));
 //        if (event.getTransactions().get(0).getFinal().getState().getType().equals(BlockTypes.AIR)) {return;}
 
 
         Sign sign = event.getTargetTile();
-        player.sendMessage(plugin.fromLegacy("getKeys: " + sign.getKeys().toString()));
-
-        player.sendMessage(plugin.fromLegacy(SignShop.getSignDirection(sign).toString()));
+//        player.sendMessage(plugin.fromLegacy("getKeys: " + sign.getKeys().toString()));
+//        player.sendMessage(plugin.fromLegacy(SignShop.getSignDirection(sign).toString()));
 
         if (sign.getLocation().getBlockType().equals(BlockTypes.WALL_SIGN)) {
-            player.sendMessage(plugin.fromLegacy("is WALL_SIGN"));
-        }
-
-//        player.getItemInHand(HandTypes.MAIN_HAND).get().createSnapshot().
-
-        for (Text i : event.getText().lines()) {
-            player.sendMessage(plugin.fromLegacy(i.toPlain()));
-        }
-
-        if (SignShop.isValidSignShop(event.getText())){
-            player.sendMessage(plugin.fromLegacy("is isValidSignChest"));
-            if (!event.getText().lines().get(0).toPlain().equals(player.getName())){
-                if (!player.hasPermission(Permissions.ADMIN)) {
-                    event.setCancelled(true);
+//            player.sendMessage(plugin.fromLegacy("is WALL_SIGN"));
+            if (SignShop.isValidSignShop(event.getText())){
+//                player.sendMessage(plugin.fromLegacy("is isValidSignChest"));
+                player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eShop created!"));
+                if (!event.getText().lines().get(0).toPlain().equals(player.getName())){
+                    if (!player.hasPermission(Permissions.ADMIN)) {
+                        player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cShop creation canceled!"));
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
+
+//        for (Text i : event.getText().lines()) {
+//            player.sendMessage(plugin.fromLegacy(i.toPlain()));
+//        }
+
     }
 
 
@@ -94,7 +94,7 @@ public class EventListener {
     public void onRightClick(InteractBlockEvent.Secondary.MainHand event, @Root Player player) {
 //        boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
 
-        player.sendMessage(plugin.fromLegacy("onRightClick: start"));
+//        player.sendMessage(plugin.fromLegacy("onRightClick: start"));
         if (player.hasPermission(Permissions.TRADE) && event.getTargetBlock().getState().getType().equals(BlockTypes.WALL_SIGN)) {
 //                player.sendMessage(plugin.fromLegacy("onRightClick: is WALL_SIGN"));
 
@@ -102,7 +102,7 @@ public class EventListener {
             Sign sign = (Sign) event.getTargetBlock().getLocation().get().getTileEntity().get();
             SignData signData = entity.get(SignData.class).get();
             if (SignShop.isValidSignShop(signData)){
-                    player.sendMessage(plugin.fromLegacy("onRightClick: isValidSignChest"));
+//                    player.sendMessage(plugin.fromLegacy("onRightClick: isValidSignChest"));
 //                    player.sendMessage(plugin.fromLegacy("onRightClick: sign 1 = " + signData.lines().get(1).toPlain()));
                 if (signData.lines().get(0).toPlain().equals(player.getName())) {
 //                        player.sendMessage(plugin.fromLegacy("onRightClick: is your SignShop"));
@@ -110,11 +110,11 @@ public class EventListener {
                     if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
 //                            player.getItemInHand(HandTypes.MAIN_HAND).get()
                         String id = Id.getItemStackID(player.getItemInHand(HandTypes.MAIN_HAND).get());
-//                            player.sendMessage(plugin.fromLegacy("onRightClick: set ID..." + id));
-                        setSignLine(entity, 3, Text.of(id));
+                        player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eShop item set to&b " + SignShop.getSignItemId(sign)));
+                        setSignLine(entity, 3, Text.of(TextColors.DARK_BLUE, id));
                     }
                 } else {
-                    player.sendMessage(plugin.fromLegacy("onRightClick: is NOT your SignShop"));
+//                    player.sendMessage(plugin.fromLegacy("onRightClick: is NOT your SignShop"));
                     Direction d = SignShop.getSignDirection(sign);
 //                        player.sendMessage(plugin.fromLegacy("onRightClick: getSignDirection=" + d.toString()));
 
@@ -160,41 +160,44 @@ public class EventListener {
                                                         if (userAccount.transfer(ownerAccount,economyService.getDefaultCurrency(),buyPrice,
                                                                 Cause.of(EventContext.empty(),(Main.getInstance()))).getResult().equals(ResultType.SUCCESS)) {
                                                             purchase(chest, sign, player);
-                                                            player.sendMessage(plugin.fromLegacy("Pay to " + ownerAccount.getDisplayName().toPlain()));
+                                                            player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eYou buy&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + buyPrice.toString() + " &efrom &b" + ownerAccount.getDisplayName().toPlain()));
                                                         } else {
-                                                            player.sendMessage(plugin.fromLegacy("onRightClick: Transfer false!"));
+                                                            player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cTransfer false!"));
                                                         }
 
                                                     }else{
-                                                        player.sendMessage(plugin.fromLegacy("Chest is empty"));
+                                                        player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cChest is empty!"));
                                                     }
 
                                                 }
 
                                                 if (sellPrice.doubleValue() > 0) {
-                                                    player.sendMessage(plugin.fromLegacy("onRightClick: (sellPrice.doubleValue() > 0)"));
+//                                                    player.sendMessage(plugin.fromLegacy("onRightClick: (sellPrice.doubleValue() > 0)"));
                                                     if (ChestUtils.canPut(chest, SignShop.getSignItemId(sign), SignShop.getSignItemCount(sign))){
-                                                        player.sendMessage(plugin.fromLegacy("onRightClick: ChestUtils.canPut"));
+//                                                        player.sendMessage(plugin.fromLegacy("onRightClick: ChestUtils.canPut"));
                                                         if (ChestUtils.containsItem(player.getInventory(), SignShop.getSignItemId(sign), SignShop.getSignItemCount(sign))){
-                                                            player.sendMessage(plugin.fromLegacy("onRightClick: ChestUtils.containsItem"));
+//                                                            player.sendMessage(plugin.fromLegacy("onRightClick: ChestUtils.containsItem"));
                                                             if (ownerAccount.transfer(userAccount,economyService.getDefaultCurrency(),sellPrice,
                                                                     Cause.of(EventContext.empty(),(Main.getInstance()))).getResult().equals(ResultType.SUCCESS)) {
                                                                 sell(chest, sign, player);
-                                                                player.sendMessage(plugin.fromLegacy("Pay to " + ownerAccount.getDisplayName().toPlain()));
+                                                                player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eYou sell&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + sellPrice.toString() + " &eto &b" + ownerAccount.getDisplayName().toPlain()));
                                                             } else {
-                                                                player.sendMessage(plugin.fromLegacy("onRightClick: Transfer false!"));
+                                                                player.sendMessage(plugin.fromLegacy("&d[ChestShop] Transfer false!"));
                                                             }
 
+                                                        } else {
+                                                            player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cYou don't have the required items!"));
                                                         }
+                                                    }else{
+                                                        player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cChest is full!"));
                                                     }
                                                 }
 
 
 
                                             } else {
-                                                player.sendMessage(plugin.fromLegacy("onRightClick: Owner not found!"));
+                                                player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cOwner not found!"));
                                             }
-
                                         } else {
 
                                         }
@@ -203,11 +206,11 @@ public class EventListener {
                                     // handle there not being an economy implementation
                                 }
                             }else{
-                                player.sendMessage(plugin.fromLegacy("onRightClick: chest not found!"));
+                                player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cChest not found!"));
                             }
                         }
                     } else {
-                        player.sendMessage(plugin.fromLegacy("onRightClick: is NOT chest!"));
+//                        player.sendMessage(plugin.fromLegacy("onRightClick: is NOT chest!"));
                     }
                 }
             }
@@ -217,7 +220,7 @@ public class EventListener {
 
 
     private boolean sell(Inventory chest, Sign sign, Player player){
-        player.sendMessage(plugin.fromLegacy("sell: started!"));
+//        player.sendMessage(plugin.fromLegacy("sell: started!"));
         BigDecimal price = SignShop.getSignSellPrice(sign);
         int count = SignShop.getSignItemCount(sign);
         String itemID = SignShop.getSignItemId(sign);
@@ -226,9 +229,9 @@ public class EventListener {
             for (Inventory slot : player.getInventory().slots()) {
                 if ((count > 0) && (slot.peek().isPresent())) {
                     if (Id.getItemStackID(slot.peek().get()).equals(itemID)) {
-                        player.sendMessage(plugin.fromLegacy("sell: Id.getItemStackID(slot.peek().get()).equals(itemID)"));
+//                        player.sendMessage(plugin.fromLegacy("sell: Id.getItemStackID(slot.peek().get()).equals(itemID)"));
                         int peekQuantity = slot.peek().get().getQuantity();
-                        player.sendMessage(plugin.fromLegacy("sell: peekQuantity >= count"));
+//                        player.sendMessage(plugin.fromLegacy("sell: peekQuantity >= count"));
                         ItemStack buy_ent = slot.peek().get().copy();
                         buy_ent.setQuantity(min(count, peekQuantity));
 
@@ -254,7 +257,7 @@ public class EventListener {
 
 
     private boolean purchase(Inventory chest, Sign sign, Player player){
-        player.sendMessage(plugin.fromLegacy("purchase: started!"));
+//        player.sendMessage(plugin.fromLegacy("purchase: started!"));
         BigDecimal price = SignShop.getSignBuyPrice(sign);
         int count = SignShop.getSignItemCount(sign);
         String itemID = SignShop.getSignItemId(sign);
