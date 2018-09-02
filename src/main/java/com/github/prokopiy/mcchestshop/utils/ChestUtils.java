@@ -10,7 +10,6 @@ import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 public class ChestUtils {
-//    private Main plugin;
 
     public static boolean containsItem(Inventory chest, String itemID, int count){
         int cnt = 0;
@@ -26,65 +25,29 @@ public class ChestUtils {
         return cnt >= count;
     }
 
-//    public static boolean containsItem(TileEntityChest chest, ItemStackSnapshot snapshot)
-//    {
-//        int foundItems = 0;
-//        Item item = Item.getByNameOrId(snapshot.getType().getId());
-//
-//        if (item != null)
-//        {
-//            for (int i = 0; i < chest.getSizeInventory(); i++)
-//            {
-//                ItemStack stack = chest.getStackInSlot(i);
-//
-//                if (stack != null && stack.getItem().equals(item)) // TODO: Metadata && stack.getMetadata() == snapshot.)
-//                {
-//                    // getStackSize
-//                    foundItems += stack.stackSize;
-//
-//                    if (foundItems >= snapshot.getCount())
-//                    {
-//                        return true;
-//                    }
+    public static boolean canPut(Inventory chest, String itemID, int count){
+        int cnt = 0;
+
+//        plugin.getLogger().info("canPut: chest size=" + String.valueOf(chest.size()));
+        for (Inventory slot : chest.slots()) {
+//            plugin.getLogger().info("canPut:" + String.valueOf(slot.size()));
+            if (slot.size() == 0) return true;
+            if (slot.peek().isPresent()) {
+                if (slot.peek().get().isEmpty()) {
+//                    plugin.getLogger().info("canPut: slot empty");
+
+                    cnt+=count;
+
+                }
+
+//                if (Id.getItemStackID(slot.peek().get()).equals(itemID)) {
+//                    cnt += slot.peek().get().getMaxStackQuantity() - slot.peek().get().getQuantity();
 //                }
-//            }
-//        }
-//
-//        return false;
-//    }
-//
-//    public static void removeItems(TileEntityChest chest, ItemStackSnapshot snapshot)
-//    {
-//        int neededItems = snapshot.getCount();
-//        int foundItems = 0;
-//        Item item = Item.getByNameOrId(snapshot.getType().getId());
-//
-//        if (item != null)
-//        {
-//            for (int i = 0; i < chest.getSizeInventory(); i++)
-//            {
-//                ItemStack stack = chest.getStackInSlot(i);
-//
-//                if (stack != null && stack.getItem().equals(item)) // TODO: Metadata && stack.getMetadata()
-//                {
-//                    if (neededItems >= foundItems + stack.stackSize)
-//                    {
-//                        chest.removeStackFromSlot(i);
-//                        foundItems += stack.stackSize;
-//                    }
-//                    else
-//                    {
-//                        int amount = (foundItems + stack.stackSize) - neededItems;
-//                        stack.stackSize = amount;
-//                        foundItems = neededItems;
-//                    }
-//                }
-//
-//                if (foundItems == neededItems)
-//                {
-//                    return;
-//                }
-//            }
-//        }
-//    }
+            }
+        }
+        return cnt >= count;
+    }
+
+
+
 }

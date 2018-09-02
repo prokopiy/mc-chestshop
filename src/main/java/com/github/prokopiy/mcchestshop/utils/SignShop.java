@@ -31,9 +31,11 @@ public class SignShop {
 
     public static boolean checkBuySell(String userNameString){
         final String PRICE3_PATTERN =
-                "(^[Bb]\\s+[\\d]+(\\.\\d+)*$)|" +
-                        "(^\\s*[\\d]+(\\.\\d+)*\\s+[Ss]\\s*$)|" +
-                        "(^\\s*[Bb]\\s+[\\d]+(\\.\\d+)*){1}(\\s*:\\s*)(\\s*[\\d]+(\\.\\d+)*\\s+[Ss]\\s*$){1}";
+                "(^[Bb]\\s+[\\d]+(\\.\\d+)*$)|"
+                + "(^[Ss]\\s+[\\d]+(\\.\\d+)*$)"
+//                        + "(^\\s*[\\d]+(\\.\\d+)*\\s+[Ss]\\s*$)|"
+//                        + "(^\\s*[Bb]\\s+[\\d]+(\\.\\d+)*){1}(\\s*:\\s*)(\\s*[\\d]+(\\.\\d+)*\\s+[Ss]\\s*$){1}"
+                ;
 
         Pattern p = Pattern.compile(PRICE3_PATTERN);
         Matcher m = p.matcher(userNameString);
@@ -50,14 +52,24 @@ public class SignShop {
         return new BigDecimal(rtrim);
     }
 
-    public static BigDecimal getSellPrice(String s){
-        int p2 = max(s.indexOf("S"), s.indexOf("s"));
-        if (p2 < 1) return new BigDecimal(0);
-        int p1 = s.indexOf(":");
-        String ltrim = s.substring(p1+1, p2).replaceAll("^\\s+","");
+    public static BigDecimal getSellPrice(String s) {
+        int p1 = max(s.indexOf("S"), s.indexOf("s"))+1;
+        if (p1 < 1) return new BigDecimal(0);
+        int p2 = s.indexOf(":");
+        if (p2 < 1) p2 = s.length();
+        String ltrim = s.substring(p1, p2).replaceAll("^\\s+","");
         String rtrim = ltrim.replaceAll("\\s+$","");
         return new BigDecimal(rtrim);
     }
+
+//    public static BigDecimal getSellPrice(String s){
+//        int p2 = max(s.indexOf("S"), s.indexOf("s"));
+//        if (p2 < 1) return new BigDecimal(0);
+//        int p1 = s.indexOf(":");
+//        String ltrim = s.substring(p1+1, p2).replaceAll("^\\s+","");
+//        String rtrim = ltrim.replaceAll("\\s+$","");
+//        return new BigDecimal(rtrim);
+//    }
 
     public static String getSignOwnerName(Sign sign){
         return sign.lines().get(0).toPlain();
