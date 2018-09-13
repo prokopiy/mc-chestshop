@@ -3,6 +3,7 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/d9c55ed7d43ae2148208c838a71b80cf55d5f9d3/spongeapi-7.1.0-SNAPSHOT.jar!/" />
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/f346df8bd4219a1311109370bad84eac67c278d/spongeapi-7.1.0-SNAPSHOT.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/cab540f5692e8664d447e34cdd22319959a51fa5/spongeapi-7.1.0-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -10,6 +11,8 @@
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/94520a9a6775272bae19be8c4410c9286ddb7366/spongeapi-7.1.0-SNAPSHOT-sources.jar!/" />
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/b7783913167b479fe5e1aeefd48275e94b279ab0/spongeapi-7.1.0-SNAPSHOT-sources.jar!/" />
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/ddd6094f761bd974c65185caa5cf657b47af38c/spongeapi-7.1.0-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/295e5ffb2ef76651dc4c058a6535f9f80666fd43/spongeapi-7.1.0-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spongepowered/spongeapi/7.1.0-SNAPSHOT/39d06f20e2c89ee8d75eb6cea356199eb9d347ba/spongeapi-7.1.0-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

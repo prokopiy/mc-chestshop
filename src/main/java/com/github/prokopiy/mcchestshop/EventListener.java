@@ -161,6 +161,11 @@ public class EventListener {
                                                                 Cause.of(EventContext.empty(),(Main.getInstance()))).getResult().equals(ResultType.SUCCESS)) {
                                                             purchase(chest, sign, player);
                                                             player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eYou buy&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + buyPrice.toString() + " &efrom &b" + ownerAccount.getDisplayName().toPlain()));
+                                                            Optional<Player> owner = user.get().getPlayer();
+                                                            if (owner.isPresent()) {
+                                                                owner.get().sendMessage(plugin.fromLegacy("&d[ChestShop]&b" + player.getName() + " &ebuy&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + buyPrice.toString() + " &efrom you"));
+                                                            }
+
                                                         } else {
                                                             player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cTransfer false!"));
                                                         }
