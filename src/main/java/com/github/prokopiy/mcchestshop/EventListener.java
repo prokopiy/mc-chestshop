@@ -122,7 +122,7 @@ public class EventListener {
 //                        player.sendMessage(plugin.fromLegacy("onRightClick: getNearLocationByDirection=" + l.getPosition().toString()));
 
 //                        TileEntityCarrier chest = (TileEntityCarrier) l.getTileEntity().get();
-                    if (l.getBlock().getType().equals(BlockTypes.CHEST) || l.getBlock().getType().equals(BlockTypes.TRAPPED_CHEST)) {
+                    if ((l.getBlock().getType().equals(BlockTypes.CHEST) || l.getBlock().getType().equals(BlockTypes.TRAPPED_CHEST)) && (!signData.lines().get(3).toPlain().isEmpty())) {
                         if (l.getTileEntity().isPresent()) {
                             TileEntityCarrier carrier = (TileEntityCarrier) l.getTileEntity().get();
                             Inventory chest = getInventory(carrier);
@@ -156,14 +156,15 @@ public class EventListener {
                                                 BigDecimal sellPrice = SignShop.getSignSellPrice(sign);
 
                                                 if (buyPrice.doubleValue() > 0) {
+                                                    Optional<Player> owner = user.get().getPlayer();
                                                     if (ChestUtils.containsItem(chest, SignShop.getSignItemId(sign), SignShop.getSignItemCount(sign))){
                                                         if (userAccount.transfer(ownerAccount,economyService.getDefaultCurrency(),buyPrice,
                                                                 Cause.of(EventContext.empty(),(Main.getInstance()))).getResult().equals(ResultType.SUCCESS)) {
                                                             purchase(chest, sign, player);
                                                             player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eYou buy&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + buyPrice.toString() + " &efrom &b" + ownerAccount.getDisplayName().toPlain()));
-                                                            Optional<Player> owner = user.get().getPlayer();
+
                                                             if (owner.isPresent()) {
-                                                                owner.get().sendMessage(plugin.fromLegacy("&d[ChestShop]&b" + player.getName() + " &ebuy&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + buyPrice.toString() + " &efrom you"));
+                                                                owner.get().sendMessage(plugin.fromLegacy("&d[ChestShop] &b" + player.getName() + " &ebuy&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + buyPrice.toString() + " &efrom you"));
                                                             }
 
                                                         } else {
@@ -171,7 +172,10 @@ public class EventListener {
                                                         }
 
                                                     }else{
-                                                        player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cChest is empty!"));
+                                                        player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cThere are no items in the shop!"));
+                                                        if (owner.isPresent()) {
+                                                            owner.get().sendMessage(plugin.fromLegacy("&d[ChestShop] &cNo&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &cin the chest!"));
+                                                        }
                                                     }
 
                                                 }
@@ -187,7 +191,7 @@ public class EventListener {
                                                                 sell(chest, sign, player);
                                                                 player.sendMessage(plugin.fromLegacy("&d[ChestShop] &eYou sell&b " + SignShop.getSignItemCount(sign).toString()  + "&e*&b" + SignShop.getSignItemId(sign) + " &eby&b " + sellPrice.toString() + " &eto &b" + ownerAccount.getDisplayName().toPlain()));
                                                             } else {
-                                                                player.sendMessage(plugin.fromLegacy("&d[ChestShop] Transfer false!"));
+                                                                player.sendMessage(plugin.fromLegacy("&d[ChestShop] &cTransfer false!"));
                                                             }
 
                                                         } else {
